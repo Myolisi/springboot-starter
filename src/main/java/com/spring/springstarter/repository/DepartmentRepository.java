@@ -11,6 +11,7 @@ import java.util.List;
 public interface DepartmentRepository extends JpaRepository<Department, Long>{
 
     // Custom query to return the department based on input
-    @Query("SELECT u FROM Department u WHERE u.departmentName LIKE %:name% OR u.departmentCode LIKE %:name%")
+    // Ignore case
+    @Query("SELECT u FROM Department u WHERE lower(u.departmentName) LIKE lower(concat('%',:name, '%')) OR u.departmentCode LIKE lower(concat('%', :name, '%') ) ")
     public List<Department> findAndSearch(String name);
 }
