@@ -1,5 +1,6 @@
 package com.spring.springstarter.service;
 
+import com.spring.springstarter.core.DepartmentNotFoundExeption;
 import com.spring.springstarter.entity.Department;
 import com.spring.springstarter.interfaces.IDepartmentService;
 import com.spring.springstarter.repository.DepartmentRepository;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import utils.ObjectChecker;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentService implements IDepartmentService {
@@ -31,8 +33,16 @@ public class DepartmentService implements IDepartmentService {
     }
 
     @Override
-    public Department getById(Long id) {
-        return departmentRepository.getById(id);
+    public Department getById(Long id) throws DepartmentNotFoundExeption {
+        Optional<Department> foundDepartment = departmentRepository.findById(id);
+
+        // if department is not found
+        if(!foundDepartment.isPresent()){
+            throw new DepartmentNotFoundExeption("The department you are looking for was not found");
+        }
+
+        // else return the found department
+        return foundDepartment.get();
     }
 
     @Override
@@ -60,7 +70,7 @@ public class DepartmentService implements IDepartmentService {
     }
 
     @Override
-    public List<Department> searchDepartment(String value) {
+    public List<Department> searchDepartment(String value)  {
         return departmentRepository.findAndSearch(value);
     }
 }
